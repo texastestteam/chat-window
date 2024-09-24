@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Fake Chat Window - Dark Mode with Text Size and Philosophy</title>
+  <!-- Include the p5.js library once -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js"></script>
+</head>
+<body>
+  <!-- This script contains our p5.js code -->
+  <script>
+    // Screen names (funny dog and cat code names)
+    let screenNames = [
+      "Chill Dog", "Lazy Dog", "Internet Dog", "Happy Dog", "Sleepy Dog",
+      "Silly Cat", "Grumpy Cat", "Whiskers", "Purrfect Cat", "Curious Cat"
+    ];
+
+    // Sayings categorized by topic
+    let petSayings = [
+      "Woof woof!", "Meow meow!", "Just chilling...", "Nap time!", "Anyone up for a walk?",
+      "Found a comfy spot!", "Chasing lasers!", "Looking for treats!", "Time to play!", "Purring loudly!"
+    ];
+
+    let gamingSayings = [
+      "GG!", "Victory Royale!", "Anyone up for Fortnite?", "I love Fortnite!", "Just got number 2!",
+      "Let's squad up!", "Building ramps!", "Watch out for snipers!", "Battle bus is leaving!", "Drop at Tilted Towers?"
+    ];
+
+    let artSayings = [
+      "The juxtaposition of colors is fascinating.", "This piece evokes deep emotions.", "The brushwork is impeccable.",
+      "Analyzing fine art design.", "The composition is well-balanced.", "Exploring abstract forms.",
+      "The chiaroscuro adds depth.", "Admiring the texture.", "The use of space is intriguing.", "Art is a universal language."
+    ];
+
+    let philosophySayings = [
+      "The unexamined life is not worth living.", "Knowledge begins in wonder.", "Man is by nature a political animal.",
+      "Happiness depends upon ourselves.", "I know that I know nothing.", "The only true wisdom is in knowing you know nothing.",
+      "Virtue is knowledge.", "We are what we repeatedly do.", "To perceive is to suffer.", "Pleasure in the job puts perfection in the work."
+    ];
+
+    // Frequencies for each saying (same length as sayings arrays)
+    let petFrequencies = [10, 10, 15, 15, 5, 10, 5, 10, 15, 5];
+    let gamingFrequencies = [15, 10, 15, 10, 10, 5, 5, 5, 5, 10];
+    let artFrequencies = [10, 10, 15, 15, 10, 5, 5, 10, 5, 5];
+    let philosophyFrequencies = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
+
+    let messages = []; // Array to hold chat messages
+    let maxMessages = 50; // Maximum messages to display
+    let lastMessageTime = 0;
+    let messageInterval = 2000; // Default interval in milliseconds
+
+    let speedSlider; // Slider to control chat speed
+    let textSizeSlider; // Slider to control text size
+    let nameColors = {}; // Object to store unique colors for each screen name
+
+    let petCheckbox, gamingCheckbox, artCheckbox, philosophyCheckbox;
+
+    function setup() {
+      createCanvas(600, 520);
+      textSize(14);
+      textFont('Arial');
+
+      // Assign a unique random color to each screen name
+      screenNames.forEach(name => {
+        nameColors[name] = color(random(100, 255), random(100, 255), random(100, 255));
+      });
+
+      // Create the text size slider (from 10 to 24, default at 14)
+      textSizeSlider = createSlider(10, 24, 14, 1);
+      textSizeSlider.position(10, height - 110);
+      textSizeSlider.style('width', '580px');
+
+      // Create the speed slider (from 1 to 5, default at 3)
+      speedSlider = createSlider(1, 5, 3, 0.1);
+      speedSlider.position(10, height - 80);
+      speedSlider.style('width', '580px');
+
+      // Create checkboxes for topics
+      petCheckbox = createCheckbox('Pets', true);
+      petCheckbox.position(10, height - 60);
+      gamingCheckbox = createCheckbox('Gaming', false);
+      gamingCheckbox.position(80, height - 60);
+      artCheckbox = createCheckbox('Art', false);
+      artCheckbox.position(160, height - 60);
+      philosophyCheckbox = createCheckbox('Philosophy', false);
+      philosophyCheckbox.position(230, height - 60);
+    }
+
+    function draw() {
+      background(30); // Dark mode background
+
+      // Update message interval based on slider value (from 5s to 1s)
+      let speed = speedSlider.value();
+      messageInterval = map(speed, 1, 5, 5000, 1000);
+
+      // Get text size from slider
+      let txtSize = textSizeSlider.value();
+      textSize(txtSize);
+
+      // Add a new message if the interval has passed
+      if (millis() - lastMessageTime > messageInterval) {
+        addNewMessage();
+        lastMessageTime = millis();
+      }
+
+      // Draw the chat window and messages
+      drawChatWindow();
+    }
+
+    function addNewMessage() {
+      // Randomly select a screen name
+      let name = random(screenNames);
+
+      // Get a saying based on selected topics
+      let saying = getRandomSaying();
+
+      // If no topics are selected, do nothing
+      if (!saying) return;
+
+      // Add the new message to the messages array
+      messages.push({ name: name, text: saying });
+
+      // Keep the messages array within the maximum limit
+      if (messages.length > maxMessages) {
+        messages.shift();
+      }
+    }
+
+    function getRandomSaying() {
+      let availableSayings = [];
+      let availableFrequencies = [];
+
+      // Collect sayings and frequencies based on selected topics
+      if (petCheckbox.checked()) {
+        availableSayings = availableSayings.concat(petSayings);
+        availableFrequencies = availableFrequencies.concat(petFrequencies);
+      }
+      if (gamingCheckbox.checked()) {
+        availableSayings = availableSayings.concat(gamingSayings);
+        availableFrequencies = availableFrequencies.concat(gamingFrequencies);
+      }
+      if (artCheckbox.checked()) {
+        availableSayings = availableSayings.concat(artSayings);
+        availableFrequencies = availableFrequencies.concat(artFrequencies);
+      }
+      if (philosophyCheckbox.checked()) {
+        availableSayings = availableSayings.concat(philosophySayings);
+        availableFrequencies = availableFrequencies.concat(philosophyFrequencies);
+      }
+
+      // If no topics are selected, return null
+      if (availableSayings.length === 0) {
+        return null;
+      }
+
+      // Calculate total frequency
+      let totalFrequency = availableFrequencies.reduce((a, b) => a + b, 0);
+      let rnd = random(totalFrequency);
+      let accum = 0;
+      // Select a saying based on its frequency
+      for (let i = 0; i < availableSayings.length; i++) {
+        accum += availableFrequencies[i];
+        if (rnd < accum) {
+          return availableSayings[i];
+        }
+      }
+      // Fallback in case of error
+      return random(availableSayings);
+    }
+
+    function drawChatWindow() {
+      // Draw the chat window background
+      fill(50);
+      rect(10, 10, width - 20, height - 140);
+
+      // Begin drawing messages
+      push();
+      translate(15, height - 140); // Adjusted position to prevent overlap
+      let y = 0;
+      let lineHeight = textSizeSlider.value() + 6; // Adjust line height based on text size
+      // Loop through messages in reverse to display the latest ones at the bottom
+      for (let i = messages.length - 1; i >= 0; i--) {
+        let msg = messages[i];
+        fill(nameColors[msg.name]); // Set text color to the screen name's color
+        text(msg.name + ": ", 0, -y);
+        fill(200); // Light text color for the message text
+        text(msg.text, textWidth(msg.name + ": "), -y);
+        y += lineHeight; // Move up for the next message
+        if (y > height - 160) {
+          break; // Stop if we've filled the chat window
+        }
+      }
+      pop();
+    }
+  </script>
+</body>
+</html>
