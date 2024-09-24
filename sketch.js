@@ -1,4 +1,4 @@
-// Chat Window Simulation in Processing (Java) - Dark Mode with Text Size and Philosophy
+// Chat Window Simulation in Processing (Java) - Dark Mode with Coding Topic
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +19,9 @@ ArrayList<Integer> artFrequencies = new ArrayList<Integer>();
 
 ArrayList<String> philosophySayings = new ArrayList<String>();
 ArrayList<Integer> philosophyFrequencies = new ArrayList<Integer>();
+
+ArrayList<String> codingSayings = new ArrayList<String>();
+ArrayList<Integer> codingFrequencies = new ArrayList<Integer>();
 
 ArrayList<Message> messages = new ArrayList<Message>();
 int maxMessages = 50;       // Maximum messages to display
@@ -42,9 +45,10 @@ boolean petChecked = true;
 boolean gamingChecked = false;
 boolean artChecked = false;
 boolean philosophyChecked = false;
+boolean codingChecked = false;
 
 void setup() {
-  size(600, 580);
+  size(600, 620);
   textSize(textSizeValue);
   fontRegular = createFont("Arial", 14);
   fontBold = createFont("Arial Bold", 14);
@@ -100,6 +104,17 @@ void setup() {
   philosophySayings.addAll(Arrays.asList(philosophyPhrases));
   for (int f : philosophyFreq) {
     philosophyFrequencies.add(f);
+  }
+  
+  // Initialize coding sayings
+  String[] codingPhrases = {
+    "Wow, nice!", "Is this the matrix?", "Hello World!", "Just debugging...", "Found a bug!",
+    "Compiling code...", "Syntax error unexpected token", "Code is poetry", "I love programming!", "Stack overflowed!"
+  };
+  int[] codingFreq = {10, 10, 15, 15, 10, 10, 5, 5, 10, 10};
+  codingSayings.addAll(Arrays.asList(codingPhrases));
+  for (int f : codingFreq) {
+    codingFrequencies.add(f);
   }
   
   // Assign a unique random color to each screen name
@@ -176,6 +191,10 @@ String getRandomSaying() {
     availableSayings.addAll(philosophySayings);
     availableFrequencies.addAll(philosophyFrequencies);
   }
+  if (codingChecked) {
+    availableSayings.addAll(codingSayings);
+    availableFrequencies.addAll(codingFrequencies);
+  }
   
   // If no topics are selected, return null
   if (availableSayings.size() == 0) {
@@ -205,11 +224,11 @@ void drawChatWindow() {
   // Draw the chat window background
   fill(50);
   stroke(255);
-  rect(10, 10, width - 20, height - 200);
+  rect(10, 10, width - 20, height - 230);
   
   // Begin drawing messages
   pushMatrix();
-  translate(15, height - 200); // Adjusted position to prevent overlap
+  translate(15, height - 230); // Adjusted position to prevent overlap
   float y = 0;
   float lineHeight = textSizeValue + 6; // Adjust line height based on text size
   
@@ -228,7 +247,7 @@ void drawChatWindow() {
     text(msg.text, textWidth(msg.name + ": "), -y);
     
     y += lineHeight; // Move up for the next message
-    if (y > height - 220) {
+    if (y > height - 250) {
       break; // Stop if we've filled the chat window
     }
   }
@@ -238,19 +257,19 @@ void drawChatWindow() {
 void drawTextSizeSlider() {
   // Draw the text size slider background
   fill(80);
-  rect(10, height - 190, width - 20, 30);
+  rect(10, height - 220, width - 20, 30);
   
   // Draw the slider line
   stroke(150);
-  line(20, height - 175, width - 30, height - 175);
+  line(20, height - 205, width - 30, height - 205);
   
   // Draw the slider handle
   float sliderX = map(textSizeValue, textSizeMin, textSizeMax, 20, width - 30);
   fill(180);
-  ellipse(sliderX, height - 175, 15, 15);
+  ellipse(sliderX, height - 205, 15, 15);
   
   // Handle mouse interaction
-  if (mousePressed && mouseY > height - 190 && mouseY < height - 160 && mouseX > 20 && mouseX < width - 30) {
+  if (mousePressed && mouseY > height - 220 && mouseY < height - 190 && mouseX > 20 && mouseX < width - 30) {
     textSizeValue = map(mouseX, 20, width - 30, textSizeMin, textSizeMax);
     textSizeValue = constrain(textSizeValue, textSizeMin, textSizeMax);
   }
@@ -259,19 +278,19 @@ void drawTextSizeSlider() {
 void drawSlider() {
   // Draw the speed slider background
   fill(80);
-  rect(10, height - 150, width - 20, 30);
+  rect(10, height - 180, width - 20, 30);
   
   // Draw the slider line
   stroke(150);
-  line(20, height - 135, width - 30, height - 135);
+  line(20, height - 165, width - 30, height - 165);
   
   // Draw the slider handle
   float sliderX = map(sliderValue, sliderMin, sliderMax, 20, width - 30);
   fill(180);
-  ellipse(sliderX, height - 135, 15, 15);
+  ellipse(sliderX, height - 165, 15, 15);
   
   // Handle mouse interaction
-  if (mousePressed && mouseY > height - 150 && mouseY < height - 120 && mouseX > 20 && mouseX < width - 30) {
+  if (mousePressed && mouseY > height - 180 && mouseY < height - 150 && mouseX > 20 && mouseX < width - 30) {
     sliderValue = map(mouseX, 20, width - 30, sliderMin, sliderMax);
     sliderValue = constrain(sliderValue, sliderMin, sliderMax);
   }
@@ -281,71 +300,85 @@ void drawCheckboxes() {
   // Draw pet checkbox
   fill(200);
   textFont(fontRegular, 14);
-  text("Pets", 20, height - 100);
+  text("Pets", 20, height - 140);
   if (petChecked) {
     fill(180);
   } else {
     fill(80);
   }
-  rect(60, height - 115, 15, 15);
+  rect(60, height - 155, 15, 15);
   
   // Draw gaming checkbox
   fill(200);
-  text("Gaming", 100, height - 100);
+  text("Gaming", 100, height - 140);
   if (gamingChecked) {
     fill(180);
   } else {
     fill(80);
   }
-  rect(150, height - 115, 15, 15);
+  rect(150, height - 155, 15, 15);
   
   // Draw art checkbox
   fill(200);
-  text("Art", 190, height - 100);
+  text("Art", 190, height - 140);
   if (artChecked) {
     fill(180);
   } else {
     fill(80);
   }
-  rect(220, height - 115, 15, 15);
+  rect(220, height - 155, 15, 15);
   
   // Draw philosophy checkbox
   fill(200);
-  text("Philosophy", 260, height - 100);
+  text("Philosophy", 260, height - 140);
   if (philosophyChecked) {
     fill(180);
   } else {
     fill(80);
   }
-  rect(340, height - 115, 15, 15);
+  rect(340, height - 155, 15, 15);
+  
+  // Draw coding checkbox
+  fill(200);
+  text("Coding", 380, height - 140);
+  if (codingChecked) {
+    fill(180);
+  } else {
+    fill(80);
+  }
+  rect(430, height - 155, 15, 15);
 }
 
 void mousePressed() {
   // Handle text size slider interaction
-  if (mouseY > height - 190 && mouseY < height - 160 && mouseX > 20 && mouseX < width - 30) {
+  if (mouseY > height - 220 && mouseY < height - 190 && mouseX > 20 && mouseX < width - 30) {
     textSizeValue = map(mouseX, 20, width - 30, textSizeMin, textSizeMax);
     textSizeValue = constrain(textSizeValue, textSizeMin, textSizeMax);
   }
   // Handle speed slider interaction
-  if (mouseY > height - 150 && mouseY < height - 120 && mouseX > 20 && mouseX < width - 30) {
+  if (mouseY > height - 180 && mouseY < height - 150 && mouseX > 20 && mouseX < width - 30) {
     sliderValue = map(mouseX, 20, width - 30, sliderMin, sliderMax);
     sliderValue = constrain(sliderValue, sliderMin, sliderMax);
   }
   // Handle pet checkbox
-  if (mouseX > 60 && mouseX < 75 && mouseY > height - 115 && mouseY < height - 100) {
+  if (mouseX > 60 && mouseX < 75 && mouseY > height - 155 && mouseY < height - 140) {
     petChecked = !petChecked;
   }
   // Handle gaming checkbox
-  if (mouseX > 150 && mouseX < 165 && mouseY > height - 115 && mouseY < height - 100) {
+  if (mouseX > 150 && mouseX < 165 && mouseY > height - 155 && mouseY < height - 140) {
     gamingChecked = !gamingChecked;
   }
   // Handle art checkbox
-  if (mouseX > 220 && mouseX < 235 && mouseY > height - 115 && mouseY < height - 100) {
+  if (mouseX > 220 && mouseX < 235 && mouseY > height - 155 && mouseY < height - 140) {
     artChecked = !artChecked;
   }
   // Handle philosophy checkbox
-  if (mouseX > 340 && mouseX < 355 && mouseY > height - 115 && mouseY < height - 100) {
+  if (mouseX > 340 && mouseX < 355 && mouseY > height - 155 && mouseY < height - 140) {
     philosophyChecked = !philosophyChecked;
+  }
+  // Handle coding checkbox
+  if (mouseX > 430 && mouseX < 445 && mouseY > height - 155 && mouseY < height - 140) {
+    codingChecked = !codingChecked;
   }
 }
 
