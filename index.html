@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Chat Window with Win Mode Speed Boost</title>
+  <title>Chat Window with Win Button Indicator</title>
   <!-- Include the p5.js library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js"></script>
 </head>
@@ -45,7 +45,7 @@
 
     // Win sayings
     let winSayings = [
-      "GG", "Victory", "Wow", "🌠🌠🌠", "⋆͛*͛ ͙͛ ⁑͛⋆͛*͛ ͙͛ ଘ(੭*ˊᵕˋ)੭* ੈ✩‧₊˚⋆͛*͛ ͙͛ ⁑͛⋆͛*͛ ͙͛"
+      "GG", "Victory", "Wow", "🌠🌠🌠", "⋆͛*͛ ͙͛⁑͛⋆͛*͛ ͙͛ ଘ(੭*ˊᵕˋ)੭* ੈ✩‧₊˚⋆͛*͛ ͙͛⁑͛⋆͛*͛ ͙͛"
     ];
 
     // Frequencies for each saying (same length as sayings arrays)
@@ -69,6 +69,11 @@
     let winButton;
     let winMode = false;
     let winModeStartTime = 0;
+
+    // Button dimensions
+    let buttonWidth;
+    let buttonHeight = 30;
+    let buttonY;
 
     function setup() {
       createCanvas(600, 600);
@@ -102,9 +107,14 @@
       codingCheckbox = createCheckbox('Coding', false);
       codingCheckbox.position(340, height - 120);
 
+      // Calculate button dimensions
+      buttonWidth = (width - 20) / 4; // Divide the controls area width by 4
+      buttonY = height - 90; // Position of the buttons
+
       // Create the Win button
       winButton = createButton('Win');
-      winButton.position(10, height - 90);
+      winButton.position(10, buttonY);
+      winButton.size(buttonWidth, buttonHeight);
       winButton.mousePressed(activateWinMode);
     }
 
@@ -134,6 +144,9 @@
 
       // Draw the chat window and messages
       drawChatWindow();
+
+      // Draw the Win mode indicator over the Win button
+      drawWinIndicator();
     }
 
     function activateWinMode() {
@@ -241,6 +254,23 @@
         }
       }
       pop();
+    }
+
+    function drawWinIndicator() {
+      // Draw the blue bar indicator over the Win button if winMode is active
+      if (winMode) {
+        let elapsedTime = millis() - winModeStartTime;
+        let remainingTime = 10000 - elapsedTime;
+        let barWidth = map(remainingTime, 0, 10000, 0, buttonWidth);
+        fill(0, 0, 255, 100); // Semi-transparent blue
+        noStroke();
+        rect(10, buttonY, barWidth, buttonHeight);
+
+        // Reset winMode after 10 seconds
+        if (remainingTime <= 0) {
+          winMode = false;
+        }
+      }
     }
   </script>
 </body>
