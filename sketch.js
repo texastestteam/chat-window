@@ -1,4 +1,4 @@
-// Chat Window Simulation in Processing (Java) - Win Button with Indicator
+// Chat Window Simulation in Processing (Java) - Data Embedded
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,20 +8,8 @@ import java.util.HashMap;
 ArrayList<String> screenNames = new ArrayList<String>();
 
 // Sayings categorized by topic
-ArrayList<String> petSayings = new ArrayList<String>();
-ArrayList<Integer> petFrequencies = new ArrayList<Integer>();
-
-ArrayList<String> gamingSayings = new ArrayList<String>();
-ArrayList<Integer> gamingFrequencies = new ArrayList<Integer>();
-
-ArrayList<String> artSayings = new ArrayList<String>();
-ArrayList<Integer> artFrequencies = new ArrayList<Integer>();
-
-ArrayList<String> philosophySayings = new ArrayList<String>();
-ArrayList<Integer> philosophyFrequencies = new ArrayList<Integer>();
-
-ArrayList<String> codingSayings = new ArrayList<String>();
-ArrayList<Integer> codingFrequencies = new ArrayList<Integer>();
+HashMap<String, ArrayList<String>> topicSayings = new HashMap<String, ArrayList<String>>();
+HashMap<String, ArrayList<Integer>> topicFrequencies = new HashMap<String, ArrayList<Integer>>();
 
 ArrayList<String> winSayings = new ArrayList<String>();
 
@@ -43,11 +31,13 @@ float textSizeValue = 14; // Default text size
 float textSizeMin = 10;
 float textSizeMax = 24;
 
+// Topic checkboxes
 boolean petChecked = true;
 boolean gamingChecked = false;
 boolean artChecked = false;
 boolean philosophyChecked = false;
 boolean codingChecked = false;
+boolean weatherChecked = false; // New Weather topic checkbox
 
 boolean winMode = false;
 int winModeStartTime = 0;
@@ -70,73 +60,110 @@ void setup() {
   };
   screenNames.addAll(Arrays.asList(names));
   
-  // Initialize pet sayings
-  String[] petPhrases = {
-    "Woof woof!", "Meow meow!", "Just chilling...", "Nap time!", "Anyone up for a walk?",
-    "Found a comfy spot!", "Chasing lasers!", "Looking for treats!", "Time to play!", "Purring loudly!"
-  };
-  int[] petFreq = {10, 10, 15, 15, 5, 10, 5, 10, 15, 5};
-  petSayings.addAll(Arrays.asList(petPhrases));
-  for (int f : petFreq) {
-    petFrequencies.add(f);
-  }
-  
-  // Initialize gaming sayings
-  String[] gamingPhrases = {
-    "GG!", "Victory Royale!", "Anyone up for Fortnite?", "I love Fortnite!", "Just got number 2!",
-    "Let's squad up!", "Building ramps!", "Watch out for snipers!", "Battle bus is leaving!", "Drop at Tilted Towers?"
-  };
-  int[] gamingFreq = {15, 10, 15, 10, 10, 5, 5, 5, 5, 10};
-  gamingSayings.addAll(Arrays.asList(gamingPhrases));
-  for (int f : gamingFreq) {
-    gamingFrequencies.add(f);
-  }
-  
-  // Initialize art sayings
-  String[] artPhrases = {
-    "The juxtaposition of colors is fascinating.", "This piece evokes deep emotions.", "The brushwork is impeccable.",
-    "Analyzing fine art design.", "The composition is well-balanced.", "Exploring abstract forms.",
-    "The chiaroscuro adds depth.", "Admiring the texture.", "The use of space is intriguing.", "Art is a universal language."
-  };
-  int[] artFreq = {10, 10, 15, 15, 10, 5, 5, 10, 5, 5};
-  artSayings.addAll(Arrays.asList(artPhrases));
-  for (int f : artFreq) {
-    artFrequencies.add(f);
-  }
-  
-  // Initialize philosophy sayings
-  String[] philosophyPhrases = {
-    "The unexamined life is not worth living.", "Knowledge begins in wonder.", "Man is by nature a political animal.",
-    "Happiness depends upon ourselves.", "I know that I know nothing.", "The only true wisdom is in knowing you know nothing.",
-    "Virtue is knowledge.", "We are what we repeatedly do.", "To perceive is to suffer.", "Pleasure in the job puts perfection in the work."
-  };
-  int[] philosophyFreq = {10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
-  philosophySayings.addAll(Arrays.asList(philosophyPhrases));
-  for (int f : philosophyFreq) {
-    philosophyFrequencies.add(f);
-  }
-  
-  // Initialize coding sayings
-  String[] codingPhrases = {
-    "Wow, nice!", "Is this the matrix?", "Hello World!", "Just debugging...", "Found a bug!",
-    "Compiling code...", "Syntax error unexpected token", "Code is poetry", "I love programming!", "Stack overflowed!"
-  };
-  int[] codingFreq = {10, 10, 15, 15, 10, 10, 5, 5, 10, 10};
-  codingSayings.addAll(Arrays.asList(codingPhrases));
-  for (int f : codingFreq) {
-    codingFrequencies.add(f);
-  }
-  
-  // Initialize win sayings
-  String[] winPhrases = {
-    "GG", "Victory", "Wow", "🌠🌠🌠", "⋆͛*͛ ͙͛⁑͛⋆͛*͛ ͙͛ ଘ(੭*ˊᵕˋ)੭* ੈ✩‧₊˚⋆͛*͛ ͙͛⁑͛⋆͛*͛ ͙͛"
-  };
-  winSayings.addAll(Arrays.asList(winPhrases));
-  
   // Assign a unique random color to each screen name
   for (String name : screenNames) {
     nameColors.put(name, color(random(100, 255), random(100, 255), random(100, 255)));
   }
+  
+  // Initialize sayings and frequencies
+  // Pets topic
+  topicSayings.put("Pets", new ArrayList<String>(Arrays.asList(
+    "Woof woof!",
+    "Meow meow!",
+    "Just chilling...",
+    "Nap time!",
+    "Anyone up for a walk?",
+    "Found a comfy spot!",
+    "Chasing lasers!",
+    "Looking for treats!",
+    "Time to play!",
+    "Purring loudly!"
+  )));
+  topicFrequencies.put("Pets", new ArrayList<Integer>(Arrays.asList(10, 10, 15, 15, 5, 10, 5, 10, 15, 5)));
+  
+  // Gaming topic
+  topicSayings.put("Gaming", new ArrayList<String>(Arrays.asList(
+    "GG!",
+    "Victory Royale!",
+    "Anyone up for Fortnite?",
+    "I love Fortnite!",
+    "Just got number 2!",
+    "Let's squad up!",
+    "Building ramps!",
+    "Watch out for snipers!",
+    "Battle bus is leaving!",
+    "Drop at Tilted Towers?"
+  )));
+  topicFrequencies.put("Gaming", new ArrayList<Integer>(Arrays.asList(15, 10, 15, 10, 10, 5, 5, 5, 5, 10)));
+  
+  // Art topic
+  topicSayings.put("Art", new ArrayList<String>(Arrays.asList(
+    "The juxtaposition of colors is fascinating.",
+    "This piece evokes deep emotions.",
+    "The brushwork is impeccable.",
+    "Analyzing fine art design.",
+    "The composition is well-balanced.",
+    "Exploring abstract forms.",
+    "The chiaroscuro adds depth.",
+    "Admiring the texture.",
+    "The use of space is intriguing.",
+    "Art is a universal language."
+  )));
+  topicFrequencies.put("Art", new ArrayList<Integer>(Arrays.asList(10, 10, 15, 15, 10, 5, 5, 10, 5, 5)));
+  
+  // Philosophy topic
+  topicSayings.put("Philosophy", new ArrayList<String>(Arrays.asList(
+    "The unexamined life is not worth living.",
+    "Knowledge begins in wonder.",
+    "Man is by nature a political animal.",
+    "Happiness depends upon ourselves.",
+    "I know that I know nothing.",
+    "The only true wisdom is in knowing you know nothing.",
+    "Virtue is knowledge.",
+    "We are what we repeatedly do.",
+    "To perceive is to suffer.",
+    "Pleasure in the job puts perfection in the work."
+  )));
+  topicFrequencies.put("Philosophy", new ArrayList<Integer>(Arrays.asList(10, 10, 10, 10, 10, 10, 10, 10, 10, 10)));
+  
+  // Coding topic
+  topicSayings.put("Coding", new ArrayList<String>(Arrays.asList(
+    "Wow, nice!",
+    "Is this the matrix?",
+    "Hello World!",
+    "Just debugging...",
+    "Found a bug!",
+    "Compiling code...",
+    "Syntax error unexpected token",
+    "Code is poetry",
+    "I love programming!",
+    "Stack overflowed!"
+  )));
+  topicFrequencies.put("Coding", new ArrayList<Integer>(Arrays.asList(10, 10, 15, 15, 10, 10, 5, 5, 10, 10)));
+  
+  // Weather topic
+  topicSayings.put("Weather", new ArrayList<String>(Arrays.asList(
+    "What's the weather?",
+    "It's nice and sunny here.",
+    "Internet weather here.",
+    "78 in Washington.",
+    "Expecting rain later.",
+    "Perfect day for a walk.",
+    "Stormy skies ahead.",
+    "Feeling the heat today.",
+    "Cold fronts moving in.",
+    "Checking the forecast."
+  )));
+  topicFrequencies.put("Weather", new ArrayList<Integer>(Arrays.asList(10, 15, 5, 10, 8, 12, 6, 9, 7, 8)));
+  
+  // Win sayings
+  winSayings.addAll(Arrays.asList(
+    "GG",
+    "Victory",
+    "Wow",
+    "🌠🌠🌠",
+    "⋆͛*͛ ͙͛⁑͛⋆͛*͛ ͙͛ ଘ(੭*ˊᵕˋ)੭*"
+  ));
   
   // Calculate button dimensions
   buttonWidth = (width - 20) / 4; // Divide the controls area width by 4
@@ -215,25 +242,29 @@ String getRandomSaying() {
   ArrayList<Integer> availableFrequencies = new ArrayList<Integer>();
   
   // Collect sayings and frequencies based on selected topics
-  if (petChecked) {
-    availableSayings.addAll(petSayings);
-    availableFrequencies.addAll(petFrequencies);
+  if (petChecked && topicSayings.containsKey("Pets")) {
+    availableSayings.addAll(topicSayings.get("Pets"));
+    availableFrequencies.addAll(topicFrequencies.get("Pets"));
   }
-  if (gamingChecked) {
-    availableSayings.addAll(gamingSayings);
-    availableFrequencies.addAll(gamingFrequencies);
+  if (gamingChecked && topicSayings.containsKey("Gaming")) {
+    availableSayings.addAll(topicSayings.get("Gaming"));
+    availableFrequencies.addAll(topicFrequencies.get("Gaming"));
   }
-  if (artChecked) {
-    availableSayings.addAll(artSayings);
-    availableFrequencies.addAll(artFrequencies);
+  if (artChecked && topicSayings.containsKey("Art")) {
+    availableSayings.addAll(topicSayings.get("Art"));
+    availableFrequencies.addAll(topicFrequencies.get("Art"));
   }
-  if (philosophyChecked) {
-    availableSayings.addAll(philosophySayings);
-    availableFrequencies.addAll(philosophyFrequencies);
+  if (philosophyChecked && topicSayings.containsKey("Philosophy")) {
+    availableSayings.addAll(topicSayings.get("Philosophy"));
+    availableFrequencies.addAll(topicFrequencies.get("Philosophy"));
   }
-  if (codingChecked) {
-    availableSayings.addAll(codingSayings);
-    availableFrequencies.addAll(codingFrequencies);
+  if (codingChecked && topicSayings.containsKey("Coding")) {
+    availableSayings.addAll(topicSayings.get("Coding"));
+    availableFrequencies.addAll(topicFrequencies.get("Coding"));
+  }
+  if (weatherChecked && topicSayings.containsKey("Weather")) { // New Weather topic
+    availableSayings.addAll(topicSayings.get("Weather"));
+    availableFrequencies.addAll(topicFrequencies.get("Weather"));
   }
   
   // If no topics are selected, return null
@@ -387,6 +418,16 @@ void drawCheckboxes() {
     fill(80);
   }
   rect(430, height - 155, 15, 15);
+  
+  // Draw weather checkbox (New)
+  fill(200);
+  text("Weather", 470, height - 140);
+  if (weatherChecked) {
+    fill(180);
+  } else {
+    fill(80);
+  }
+  rect(530, height - 155, 15, 15);
 }
 
 void drawWinButton() {
@@ -452,6 +493,10 @@ void mousePressed() {
   // Handle coding checkbox
   if (mouseX > 430 && mouseX < 445 && mouseY > height - 155 && mouseY < height - 140) {
     codingChecked = !codingChecked;
+  }
+  // Handle weather checkbox (New)
+  if (mouseX > 530 && mouseX < 545 && mouseY > height - 155 && mouseY < height - 140) {
+    weatherChecked = !weatherChecked;
   }
   // Handle Win button click is now handled in drawWinButton()
 }
