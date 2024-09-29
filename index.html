@@ -2,8 +2,8 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Fake Chat Window - Dark Mode with Coding Topic</title>
-  <!-- Include the p5.js library once -->
+  <title>Chat Window with Win Mode Speed Boost</title>
+  <!-- Include the p5.js library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js"></script>
 </head>
 <body>
@@ -43,6 +43,11 @@
       "Compiling code...", "Syntax error unexpected token", "Code is poetry", "I love programming!", "Stack overflowed!"
     ];
 
+    // Win sayings
+    let winSayings = [
+      "GG", "Victory", "Wow", "🌠🌠🌠", "⋆͛*͛ ͙͛ ⁑͛⋆͛*͛ ͙͛ ଘ(੭*ˊᵕˋ)੭* ੈ✩‧₊˚⋆͛*͛ ͙͛ ⁑͛⋆͛*͛ ͙͛"
+    ];
+
     // Frequencies for each saying (same length as sayings arrays)
     let petFrequencies = [10, 10, 15, 15, 5, 10, 5, 10, 15, 5];
     let gamingFrequencies = [15, 10, 15, 10, 10, 5, 5, 5, 5, 10];
@@ -61,8 +66,12 @@
 
     let petCheckbox, gamingCheckbox, artCheckbox, philosophyCheckbox, codingCheckbox;
 
+    let winButton;
+    let winMode = false;
+    let winModeStartTime = 0;
+
     function setup() {
-      createCanvas(600, 560);
+      createCanvas(600, 600);
       textSize(14);
       textFont('Arial');
 
@@ -73,33 +82,45 @@
 
       // Create the text size slider (from 10 to 24, default at 14)
       textSizeSlider = createSlider(10, 24, 14, 1);
-      textSizeSlider.position(10, height - 140);
+      textSizeSlider.position(10, height - 170);
       textSizeSlider.style('width', '580px');
 
       // Create the speed slider (from 1 to 5, default at 3)
       speedSlider = createSlider(1, 5, 3, 0.1);
-      speedSlider.position(10, height - 110);
+      speedSlider.position(10, height - 140);
       speedSlider.style('width', '580px');
 
       // Create checkboxes for topics
       petCheckbox = createCheckbox('Pets', true);
-      petCheckbox.position(10, height - 90);
+      petCheckbox.position(10, height - 120);
       gamingCheckbox = createCheckbox('Gaming', false);
-      gamingCheckbox.position(80, height - 90);
+      gamingCheckbox.position(80, height - 120);
       artCheckbox = createCheckbox('Art', false);
-      artCheckbox.position(160, height - 90);
+      artCheckbox.position(160, height - 120);
       philosophyCheckbox = createCheckbox('Philosophy', false);
-      philosophyCheckbox.position(230, height - 90);
+      philosophyCheckbox.position(230, height - 120);
       codingCheckbox = createCheckbox('Coding', false);
-      codingCheckbox.position(340, height - 90);
+      codingCheckbox.position(340, height - 120);
+
+      // Create the Win button
+      winButton = createButton('Win');
+      winButton.position(10, height - 90);
+      winButton.mousePressed(activateWinMode);
     }
 
     function draw() {
       background(30); // Dark mode background
 
-      // Update message interval based on slider value (from 5s to 1s)
+      // Get the current speed from the slider
       let speed = speedSlider.value();
-      messageInterval = map(speed, 1, 5, 5000, 1000);
+
+      // Calculate message interval based on whether Win mode is active
+      if (winMode) {
+        // During Win mode, messages appear twice as fast
+        messageInterval = map(speed, 1, 5, 5000, 1000) / 2;
+      } else {
+        messageInterval = map(speed, 1, 5, 5000, 1000);
+      }
 
       // Get text size from slider
       let txtSize = textSizeSlider.value();
@@ -115,15 +136,32 @@
       drawChatWindow();
     }
 
+    function activateWinMode() {
+      winMode = true;
+      winModeStartTime = millis();
+    }
+
     function addNewMessage() {
       // Randomly select a screen name
       let name = random(screenNames);
 
-      // Get a saying based on selected topics
-      let saying = getRandomSaying();
+      let saying;
 
-      // If no topics are selected, do nothing
-      if (!saying) return;
+      if (winMode) {
+        // During Win mode, use winSayings
+        saying = random(winSayings);
+
+        // Check if 10 seconds have passed
+        if (millis() - winModeStartTime > 10000) {
+          winMode = false;
+        }
+      } else {
+        // Get a saying based on selected topics
+        saying = getRandomSaying();
+
+        // If no topics are selected, do nothing
+        if (!saying) return;
+      }
 
       // Add the new message to the messages array
       messages.push({ name: name, text: saying });
@@ -183,11 +221,11 @@
     function drawChatWindow() {
       // Draw the chat window background
       fill(50);
-      rect(10, 10, width - 20, height - 170);
+      rect(10, 10, width - 20, height - 200);
 
       // Begin drawing messages
       push();
-      translate(15, height - 170); // Adjusted position to prevent overlap
+      translate(15, height - 200); // Adjusted position to prevent overlap
       let y = 0;
       let lineHeight = textSizeSlider.value() + 6; // Adjust line height based on text size
       // Loop through messages in reverse to display the latest ones at the bottom
@@ -198,7 +236,7 @@
         fill(200); // Light text color for the message text
         text(msg.text, textWidth(msg.name + ": "), -y);
         y += lineHeight; // Move up for the next message
-        if (y > height - 190) {
+        if (y > height - 220) {
           break; // Stop if we've filled the chat window
         }
       }
