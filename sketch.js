@@ -1,4 +1,4 @@
-// Chat Window Simulation in Processing (Java) - Dark Mode with Coding Topic
+// Chat Window Simulation in Processing (Java) - Win Mode Speed Boost
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +23,8 @@ ArrayList<Integer> philosophyFrequencies = new ArrayList<Integer>();
 ArrayList<String> codingSayings = new ArrayList<String>();
 ArrayList<Integer> codingFrequencies = new ArrayList<Integer>();
 
+ArrayList<String> winSayings = new ArrayList<String>();
+
 ArrayList<Message> messages = new ArrayList<Message>();
 int maxMessages = 50;       // Maximum messages to display
 int lastMessageTime = 0;
@@ -46,6 +48,9 @@ boolean gamingChecked = false;
 boolean artChecked = false;
 boolean philosophyChecked = false;
 boolean codingChecked = false;
+
+boolean winMode = false;
+int winModeStartTime = 0;
 
 void setup() {
   size(600, 620);
@@ -117,6 +122,12 @@ void setup() {
     codingFrequencies.add(f);
   }
   
+  // Initialize win sayings
+  String[] winPhrases = {
+    "GG", "Victory", "Wow", "🌠🌠🌠", "⋆͛*͛ ͙͛ ⁑͛⋆͛*͛ ͙͛ ଘ(੭*ˊᵕˋ)੭* ੈ✩‧₊˚⋆͛*͛ ͙͛ ⁑͛⋆͛*͛ ͙͛"
+  };
+  winSayings.addAll(Arrays.asList(winPhrases));
+  
   // Assign a unique random color to each screen name
   for (String name : screenNames) {
     nameColors.put(name, color(random(100, 255), random(100, 255), random(100, 255)));
@@ -129,11 +140,16 @@ void draw() {
   // Update text size from slider
   textSize(textSizeValue);
   
+  // Calculate message interval based on whether Win mode is active
+  if (winMode) {
+    // During Win mode, messages appear twice as fast
+    messageInterval = (int)map(sliderValue, sliderMin, sliderMax, 5000, 1000) / 2;
+  } else {
+    messageInterval = (int)map(sliderValue, sliderMin, sliderMax, 5000, 1000);
+  }
+  
   // Draw the chat window and messages
   drawChatWindow();
-  
-  // Update message interval based on slider value (from 5s to 1s)
-  messageInterval = (int)map(sliderValue, sliderMin, sliderMax, 5000, 1000);
   
   // Add a new message if the interval has passed
   if (millis() - lastMessageTime > messageInterval) {
@@ -149,17 +165,32 @@ void draw() {
   
   // Draw checkboxes
   drawCheckboxes();
+  
+  // Draw the Win button
+  drawWinButton();
 }
 
 void addNewMessage() {
   // Randomly select a screen name
   String name = screenNames.get((int)random(screenNames.size()));
   
-  // Get a saying based on selected topics
-  String saying = getRandomSaying();
+  String saying;
   
-  // If no topics are selected, do nothing
-  if (saying == null) return;
+  if (winMode) {
+    // During Win mode, use winSayings
+    saying = winSayings.get((int)random(winSayings.size()));
+    
+    // Check if 10 seconds have passed
+    if (millis() - winModeStartTime > 10000) {
+      winMode = false;
+    }
+  } else {
+    // Get a saying based on selected topics
+    saying = getRandomSaying();
+    
+    // If no topics are selected, do nothing
+    if (saying == null) return;
+  }
   
   // Add the new message to the messages array
   messages.add(new Message(name, saying));
@@ -349,6 +380,16 @@ void drawCheckboxes() {
   rect(430, height - 155, 15, 15);
 }
 
+void drawWinButton() {
+  // Draw the Win button
+  fill(80);
+  rect(10, height - 110, width - 20, 30);
+  fill(200);
+  textAlign(CENTER, CENTER);
+  textFont(fontBold, 16);
+  text("Win", width / 2, height - 95);
+}
+
 void mousePressed() {
   // Handle text size slider interaction
   if (mouseY > height - 220 && mouseY < height - 190 && mouseX > 20 && mouseX < width - 30) {
@@ -379,6 +420,11 @@ void mousePressed() {
   // Handle coding checkbox
   if (mouseX > 430 && mouseX < 445 && mouseY > height - 155 && mouseY < height - 140) {
     codingChecked = !codingChecked;
+  }
+  // Handle Win button
+  if (mouseX > 10 && mouseX < width - 10 && mouseY > height - 110 && mouseY < height - 80) {
+    winMode = true;
+    winModeStartTime = millis();
   }
 }
 
