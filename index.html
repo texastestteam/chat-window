@@ -2,58 +2,117 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Chat Window with Win Button Indicator</title>
+  <title>Chat Window with Embedded Data</title>
   <!-- Include the p5.js library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js"></script>
 </head>
 <body>
   <!-- This script contains our p5.js code -->
   <script>
-    // Screen names (funny dog and cat code names)
     let screenNames = [
-      "Chill Dog", "Lazy Dog", "Internet Dog", "Happy Dog", "Sleepy Dog",
-      "Silly Cat", "Grumpy Cat", "Whiskers", "Purrfect Cat", "Curious Cat"
+      "Chill Dog",
+      "Lazy Dog",
+      "Internet Dog",
+      "Happy Dog",
+      "Sleepy Dog",
+      "Silly Cat",
+      "Grumpy Cat",
+      "Whiskers",
+      "Purrfect Cat",
+      "Curious Cat"
     ];
 
-    // Sayings categorized by topic
-    let petSayings = [
-      "Woof woof!", "Meow meow!", "Just chilling...", "Nap time!", "Anyone up for a walk?",
-      "Found a comfy spot!", "Chasing lasers!", "Looking for treats!", "Time to play!", "Purring loudly!"
-    ];
+    let topicSayings = {
+      "Pets": [
+        "Woof woof!",
+        "Meow meow!",
+        "Just chilling...",
+        "Nap time!",
+        "Anyone up for a walk?",
+        "Found a comfy spot!",
+        "Chasing lasers!",
+        "Looking for treats!",
+        "Time to play!",
+        "Purring loudly!"
+      ],
+      "Gaming": [
+        "GG!",
+        "Victory Royale!",
+        "Anyone up for Fortnite?",
+        "I love Fortnite!",
+        "Just got number 2!",
+        "Let's squad up!",
+        "Building ramps!",
+        "Watch out for snipers!",
+        "Battle bus is leaving!",
+        "Drop at Tilted Towers?"
+      ],
+      "Art": [
+        "The juxtaposition of colors is fascinating.",
+        "This piece evokes deep emotions.",
+        "The brushwork is impeccable.",
+        "Analyzing fine art design.",
+        "The composition is well-balanced.",
+        "Exploring abstract forms.",
+        "The chiaroscuro adds depth.",
+        "Admiring the texture.",
+        "The use of space is intriguing.",
+        "Art is a universal language."
+      ],
+      "Philosophy": [
+        "The unexamined life is not worth living.",
+        "Knowledge begins in wonder.",
+        "Man is by nature a political animal.",
+        "Happiness depends upon ourselves.",
+        "I know that I know nothing.",
+        "The only true wisdom is in knowing you know nothing.",
+        "Virtue is knowledge.",
+        "We are what we repeatedly do.",
+        "To perceive is to suffer.",
+        "Pleasure in the job puts perfection in the work."
+      ],
+      "Coding": [
+        "Wow, nice!",
+        "Is this the matrix?",
+        "Hello World!",
+        "Just debugging...",
+        "Found a bug!",
+        "Compiling code...",
+        "Syntax error unexpected token",
+        "Code is poetry",
+        "I love programming!",
+        "Stack overflowed!"
+      ],
+      "Weather": [
+        "What's the weather?",
+        "It's nice and sunny here.",
+        "Internet weather here.",
+        "78 in Washington.",
+        "Expecting rain later.",
+        "Perfect day for a walk.",
+        "Stormy skies ahead.",
+        "Feeling the heat today.",
+        "Cold fronts moving in.",
+        "Checking the forecast."
+      ]
+    };
 
-    let gamingSayings = [
-      "GG!", "Victory Royale!", "Anyone up for Fortnite?", "I love Fortnite!", "Just got number 2!",
-      "Let's squad up!", "Building ramps!", "Watch out for snipers!", "Battle bus is leaving!", "Drop at Tilted Towers?"
-    ];
+    let topicFrequencies = {
+      "Pets": [10, 10, 15, 15, 5, 10, 5, 10, 15, 5],
+      "Gaming": [15, 10, 15, 10, 10, 5, 5, 5, 5, 10],
+      "Art": [10, 10, 15, 15, 10, 5, 5, 10, 5, 5],
+      "Philosophy": [10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
+      "Coding": [10, 10, 15, 15, 10, 10, 5, 5, 10, 10],
+      "Weather": [10, 15, 5, 10, 8, 12, 6, 9, 7, 8]
+    };
 
-    let artSayings = [
-      "The juxtaposition of colors is fascinating.", "This piece evokes deep emotions.", "The brushwork is impeccable.",
-      "Analyzing fine art design.", "The composition is well-balanced.", "Exploring abstract forms.",
-      "The chiaroscuro adds depth.", "Admiring the texture.", "The use of space is intriguing.", "Art is a universal language."
-    ];
-
-    let philosophySayings = [
-      "The unexamined life is not worth living.", "Knowledge begins in wonder.", "Man is by nature a political animal.",
-      "Happiness depends upon ourselves.", "I know that I know nothing.", "The only true wisdom is in knowing you know nothing.",
-      "Virtue is knowledge.", "We are what we repeatedly do.", "To perceive is to suffer.", "Pleasure in the job puts perfection in the work."
-    ];
-
-    let codingSayings = [
-      "Wow, nice!", "Is this the matrix?", "Hello World!", "Just debugging...", "Found a bug!",
-      "Compiling code...", "Syntax error unexpected token", "Code is poetry", "I love programming!", "Stack overflowed!"
-    ];
-
-    // Win sayings
     let winSayings = [
-      "GG", "Victory", "Wow", "🌠🌠🌠", "⋆͛*͛ ͙͛⁑͛⋆͛*͛ ͙͛ ଘ(੭*ˊᵕˋ)੭* ੈ✩‧₊˚⋆͛*͛ ͙͛⁑͛⋆͛*͛ ͙͛"
+      "GG",
+      "Victory",
+      "Wow",
+      "🌠🌠🌠",
+      "⋆͛*͛ ͙͛⁑͛⋆͛*͛ ͙͛ ଘ(੭*ˊᵕˋ)੭*"
     ];
-
-    // Frequencies for each saying (same length as sayings arrays)
-    let petFrequencies = [10, 10, 15, 15, 5, 10, 5, 10, 15, 5];
-    let gamingFrequencies = [15, 10, 15, 10, 10, 5, 5, 5, 5, 10];
-    let artFrequencies = [10, 10, 15, 15, 10, 5, 5, 10, 5, 5];
-    let philosophyFrequencies = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
-    let codingFrequencies = [10, 10, 15, 15, 10, 10, 5, 5, 10, 10];
 
     let messages = []; // Array to hold chat messages
     let maxMessages = 50; // Maximum messages to display
@@ -64,7 +123,7 @@
     let textSizeSlider; // Slider to control text size
     let nameColors = {}; // Object to store unique colors for each screen name
 
-    let petCheckbox, gamingCheckbox, artCheckbox, philosophyCheckbox, codingCheckbox;
+    let petCheckbox, gamingCheckbox, artCheckbox, philosophyCheckbox, codingCheckbox, weatherCheckbox;
 
     let winButton;
     let winMode = false;
@@ -106,6 +165,8 @@
       philosophyCheckbox.position(230, height - 120);
       codingCheckbox = createCheckbox('Coding', false);
       codingCheckbox.position(340, height - 120);
+      weatherCheckbox = createCheckbox('Weather', false); // New Weather checkbox
+      weatherCheckbox.position(420, height - 120);
 
       // Calculate button dimensions
       buttonWidth = (width - 20) / 4; // Divide the controls area width by 4
@@ -190,25 +251,29 @@
       let availableFrequencies = [];
 
       // Collect sayings and frequencies based on selected topics
-      if (petCheckbox.checked()) {
-        availableSayings = availableSayings.concat(petSayings);
-        availableFrequencies = availableFrequencies.concat(petFrequencies);
+      if (petCheckbox.checked() && topicSayings['Pets']) {
+        availableSayings = availableSayings.concat(topicSayings['Pets']);
+        availableFrequencies = availableFrequencies.concat(topicFrequencies['Pets']);
       }
-      if (gamingCheckbox.checked()) {
-        availableSayings = availableSayings.concat(gamingSayings);
-        availableFrequencies = availableFrequencies.concat(gamingFrequencies);
+      if (gamingCheckbox.checked() && topicSayings['Gaming']) {
+        availableSayings = availableSayings.concat(topicSayings['Gaming']);
+        availableFrequencies = availableFrequencies.concat(topicFrequencies['Gaming']);
       }
-      if (artCheckbox.checked()) {
-        availableSayings = availableSayings.concat(artSayings);
-        availableFrequencies = availableFrequencies.concat(artFrequencies);
+      if (artCheckbox.checked() && topicSayings['Art']) {
+        availableSayings = availableSayings.concat(topicSayings['Art']);
+        availableFrequencies = availableFrequencies.concat(topicFrequencies['Art']);
       }
-      if (philosophyCheckbox.checked()) {
-        availableSayings = availableSayings.concat(philosophySayings);
-        availableFrequencies = availableFrequencies.concat(philosophyFrequencies);
+      if (philosophyCheckbox.checked() && topicSayings['Philosophy']) {
+        availableSayings = availableSayings.concat(topicSayings['Philosophy']);
+        availableFrequencies = availableFrequencies.concat(topicFrequencies['Philosophy']);
       }
-      if (codingCheckbox.checked()) {
-        availableSayings = availableSayings.concat(codingSayings);
-        availableFrequencies = availableFrequencies.concat(codingFrequencies);
+      if (codingCheckbox.checked() && topicSayings['Coding']) {
+        availableSayings = availableSayings.concat(topicSayings['Coding']);
+        availableFrequencies = availableFrequencies.concat(topicFrequencies['Coding']);
+      }
+      if (weatherCheckbox.checked() && topicSayings['Weather']) { // New Weather topic
+        availableSayings = availableSayings.concat(topicSayings['Weather']);
+        availableFrequencies = availableFrequencies.concat(topicFrequencies['Weather']);
       }
 
       // If no topics are selected, return null
