@@ -1,4 +1,4 @@
-// Chat Window Simulation in Processing (Java) - Win Mode Speed Boost
+// Chat Window Simulation in Processing (Java) - Win Button with Indicator
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,6 +51,11 @@ boolean codingChecked = false;
 
 boolean winMode = false;
 int winModeStartTime = 0;
+
+// Dimensions for the buttons
+float buttonWidth;
+float buttonHeight = 30;
+float buttonY;
 
 void setup() {
   size(600, 620);
@@ -124,7 +129,7 @@ void setup() {
   
   // Initialize win sayings
   String[] winPhrases = {
-    "GG", "Victory", "Wow", "🌠🌠🌠", "⋆͛*͛ ͙͛ ⁑͛⋆͛*͛ ͙͛ ଘ(੭*ˊᵕˋ)੭* ੈ✩‧₊˚⋆͛*͛ ͙͛ ⁑͛⋆͛*͛ ͙͛"
+    "GG", "Victory", "Wow", "🌠🌠🌠", "⋆͛*͛ ͙͛⁑͛⋆͛*͛ ͙͛ ଘ(੭*ˊᵕˋ)੭* ੈ✩‧₊˚⋆͛*͛ ͙͛⁑͛⋆͛*͛ ͙͛"
   };
   winSayings.addAll(Arrays.asList(winPhrases));
   
@@ -132,6 +137,10 @@ void setup() {
   for (String name : screenNames) {
     nameColors.put(name, color(random(100, 255), random(100, 255), random(100, 255)));
   }
+  
+  // Calculate button dimensions
+  buttonWidth = (width - 20) / 4; // Divide the controls area width by 4
+  buttonY = height - 110; // Position of the buttons
 }
 
 void draw() {
@@ -166,7 +175,7 @@ void draw() {
   // Draw checkboxes
   drawCheckboxes();
   
-  // Draw the Win button
+  // Draw the Win button with indicator
   drawWinButton();
 }
 
@@ -381,13 +390,36 @@ void drawCheckboxes() {
 }
 
 void drawWinButton() {
-  // Draw the Win button
+  // Draw the Win button background
   fill(80);
-  rect(10, height - 110, width - 20, 30);
+  rect(10, buttonY, buttonWidth, buttonHeight);
+  
+  // Handle Win button click
+  if (mousePressed && mouseX > 10 && mouseX < 10 + buttonWidth && mouseY > buttonY && mouseY < buttonY + buttonHeight) {
+    winMode = true;
+    winModeStartTime = millis();
+  }
+  
+  // Draw the blue bar indicator over the Win button if winMode is active
+  if (winMode) {
+    int elapsedTime = millis() - winModeStartTime;
+    int remainingTime = 10000 - elapsedTime;
+    float barWidth = map(remainingTime, 0, 10000, 0, buttonWidth);
+    fill(0, 0, 255, 100); // Semi-transparent blue
+    noStroke();
+    rect(10, buttonY, barWidth, buttonHeight);
+    
+    // Reset winMode after 10 seconds
+    if (remainingTime <= 0) {
+      winMode = false;
+    }
+  }
+  
+  // Draw the Win button text
   fill(200);
   textAlign(CENTER, CENTER);
   textFont(fontBold, 16);
-  text("Win", width / 2, height - 95);
+  text("Win", 10 + buttonWidth / 2, buttonY + buttonHeight / 2);
 }
 
 void mousePressed() {
@@ -421,11 +453,7 @@ void mousePressed() {
   if (mouseX > 430 && mouseX < 445 && mouseY > height - 155 && mouseY < height - 140) {
     codingChecked = !codingChecked;
   }
-  // Handle Win button
-  if (mouseX > 10 && mouseX < width - 10 && mouseY > height - 110 && mouseY < height - 80) {
-    winMode = true;
-    winModeStartTime = millis();
-  }
+  // Handle Win button click is now handled in drawWinButton()
 }
 
 class Message {
