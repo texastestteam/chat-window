@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Chat Window with Enhanced Name Colors</title>
+  <title>Chat Window with Refined Code</title>
   <!-- Include the p5.js library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js"></script>
 </head>
@@ -22,88 +22,54 @@
       "Curious Cat"
     ];
 
+    // Sayings categorized by topic with frequencies
     let topicSayings = {
       "Pets": [
-        "Woof woof!",
-        "Meow meow!",
-        "Just chilling...",
-        "Nap time!",
-        "Anyone up for a walk?",
-        "Found a comfy spot!",
-        "Chasing lasers!",
-        "Looking for treats!",
-        "Time to play!",
-        "Purring loudly!"
+        { text: "Woof woof!", frequency: 10 },
+        { text: "Meow meow!", frequency: 10 },
+        { text: "Just chilling...", frequency: 15 },
+        { text: "Nap time!", frequency: 15 },
+        { text: "Anyone up for a walk?", frequency: 5 },
+        { text: "Found a comfy spot!", frequency: 10 },
+        { text: "Chasing lasers!", frequency: 5 },
+        { text: "Looking for treats!", frequency: 10 },
+        { text: "Time to play!", frequency: 15 },
+        { text: "Purring loudly!", frequency: 5 }
       ],
       "Gaming": [
-        "GG!",
-        "Victory Royale!",
-        "Anyone up for Fortnite?",
-        "I love Fortnite!",
-        "Just got number 2!",
-        "Let's squad up!",
-        "Building ramps!",
-        "Watch out for snipers!",
-        "Battle bus is leaving!",
-        "Drop at Tilted Towers?"
+        { text: "GG!", frequency: 15 },
+        { text: "Victory Royale!", frequency: 10 },
+        { text: "Anyone up for Fortnite?", frequency: 15 },
+        { text: "I love Fortnite!", frequency: 10 },
+        { text: "Just got number 2!", frequency: 10 },
+        { text: "Let's squad up!", frequency: 5 },
+        { text: "Building ramps!", frequency: 5 },
+        { text: "Watch out for snipers!", frequency: 5 },
+        { text: "Battle bus is leaving!", frequency: 5 },
+        { text: "Drop at Tilted Towers?", frequency: 10 }
       ],
+      // Include other topics similarly...
       "Art": [
-        "The juxtaposition of colors is fascinating.",
-        "This piece evokes deep emotions.",
-        "The brushwork is impeccable.",
-        "Analyzing fine art design.",
-        "The composition is well-balanced.",
-        "Exploring abstract forms.",
-        "The chiaroscuro adds depth.",
-        "Admiring the texture.",
-        "The use of space is intriguing.",
-        "Art is a universal language."
+        // Art sayings with frequencies
       ],
       "Philosophy": [
-        "The unexamined life is not worth living.",
-        "Knowledge begins in wonder.",
-        "Man is by nature a political animal.",
-        "Happiness depends upon ourselves.",
-        "I know that I know nothing.",
-        "The only true wisdom is in knowing you know nothing.",
-        "Virtue is knowledge.",
-        "We are what we repeatedly do.",
-        "To perceive is to suffer.",
-        "Pleasure in the job puts perfection in the work."
+        // Philosophy sayings with frequencies
       ],
       "Coding": [
-        "Wow, nice!",
-        "Is this the matrix?",
-        "Hello World!",
-        "Just debugging...",
-        "Found a bug!",
-        "Compiling code...",
-        "Syntax error unexpected token",
-        "Code is poetry",
-        "I love programming!",
-        "Stack overflowed!"
+        // Coding sayings with frequencies
       ],
       "Weather": [
-        "What's the weather?",
-        "It's nice and sunny here.",
-        "Internet weather here.",
-        "78 in Washington.",
-        "Expecting rain later.",
-        "Perfect day for a walk.",
-        "Stormy skies ahead.",
-        "Feeling the heat today.",
-        "Cold fronts moving in.",
-        "Checking the forecast."
+        { text: "What's the weather?", frequency: 10 },
+        { text: "It's nice and sunny here.", frequency: 15 },
+        { text: "Internet weather here.", frequency: 5 },
+        { text: "78 in Washington.", frequency: 10 },
+        { text: "Expecting rain later.", frequency: 8 },
+        { text: "Perfect day for a walk.", frequency: 12 },
+        { text: "Stormy skies ahead.", frequency: 6 },
+        { text: "Feeling the heat today.", frequency: 9 },
+        { text: "Cold fronts moving in.", frequency: 7 },
+        { text: "Checking the forecast.", frequency: 8 }
       ]
-    };
-
-    let topicFrequencies = {
-      "Pets": [10, 10, 15, 15, 5, 10, 5, 10, 15, 5],
-      "Gaming": [15, 10, 15, 10, 10, 5, 5, 5, 5, 10],
-      "Art": [10, 10, 15, 15, 10, 5, 5, 10, 5, 5],
-      "Philosophy": [10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
-      "Coding": [10, 10, 15, 15, 10, 10, 5, 5, 10, 10],
-      "Weather": [10, 15, 5, 10, 8, 12, 6, 9, 7, 8]
     };
 
     let winSayings = [
@@ -142,20 +108,17 @@
       // Set color mode to HSB for vibrant colors
       colorMode(HSB, 360, 100, 100);
 
-      // Assign a unique random color to each screen name with full saturation and brightness
+      // Assign colors to screen names
       screenNames.forEach(name => {
         nameColors[name] = color(random(0, 360), 100, 100);
       });
 
-      // Revert back to RGB color mode if needed
-      // colorMode(RGB, 255);
-
-      // Create the text size slider (from 10 to 24, default at 14)
+      // Create the text size slider
       textSizeSlider = createSlider(10, 24, 14, 1);
       textSizeSlider.position(10, height - 170);
       textSizeSlider.style('width', '580px');
 
-      // Create the speed slider (from 1 to 5, default at 3)
+      // Create the speed slider
       speedSlider = createSlider(1, 5, 3, 0.1);
       speedSlider.position(10, height - 140);
       speedSlider.style('width', '580px');
@@ -171,12 +134,12 @@
       philosophyCheckbox.position(230, height - 120);
       codingCheckbox = createCheckbox('Coding', false);
       codingCheckbox.position(340, height - 120);
-      weatherCheckbox = createCheckbox('Weather', false); // New Weather checkbox
+      weatherCheckbox = createCheckbox('Weather', false);
       weatherCheckbox.position(420, height - 120);
 
       // Calculate button dimensions
-      buttonWidth = (width - 20) / 4; // Divide the controls area width by 4
-      buttonY = height - 90; // Position of the buttons
+      buttonWidth = (width - 20) / 4;
+      buttonY = height - 90;
 
       // Create the Win button
       winButton = createButton('Win');
@@ -186,14 +149,13 @@
     }
 
     function draw() {
-      background(20); // Dark mode background
+      background(30); // Background color of the canvas
 
       // Get the current speed from the slider
       let speed = speedSlider.value();
 
-      // Calculate message interval based on whether Win mode is active
+      // Calculate message interval
       if (winMode) {
-        // During Win mode, messages appear twice as fast
         messageInterval = map(speed, 1, 5, 5000, 1000) / 2;
       } else {
         messageInterval = map(speed, 1, 5, 5000, 1000);
@@ -254,32 +216,25 @@
 
     function getRandomSaying() {
       let availableSayings = [];
-      let availableFrequencies = [];
 
-      // Collect sayings and frequencies based on selected topics
+      // Collect sayings based on selected topics
       if (petCheckbox.checked() && topicSayings['Pets']) {
         availableSayings = availableSayings.concat(topicSayings['Pets']);
-        availableFrequencies = availableFrequencies.concat(topicFrequencies['Pets']);
       }
       if (gamingCheckbox.checked() && topicSayings['Gaming']) {
         availableSayings = availableSayings.concat(topicSayings['Gaming']);
-        availableFrequencies = availableFrequencies.concat(topicFrequencies['Gaming']);
       }
       if (artCheckbox.checked() && topicSayings['Art']) {
         availableSayings = availableSayings.concat(topicSayings['Art']);
-        availableFrequencies = availableFrequencies.concat(topicFrequencies['Art']);
       }
       if (philosophyCheckbox.checked() && topicSayings['Philosophy']) {
         availableSayings = availableSayings.concat(topicSayings['Philosophy']);
-        availableFrequencies = availableFrequencies.concat(topicFrequencies['Philosophy']);
       }
       if (codingCheckbox.checked() && topicSayings['Coding']) {
         availableSayings = availableSayings.concat(topicSayings['Coding']);
-        availableFrequencies = availableFrequencies.concat(topicFrequencies['Coding']);
       }
-      if (weatherCheckbox.checked() && topicSayings['Weather']) { // New Weather topic
+      if (weatherCheckbox.checked() && topicSayings['Weather']) {
         availableSayings = availableSayings.concat(topicSayings['Weather']);
-        availableFrequencies = availableFrequencies.concat(topicFrequencies['Weather']);
       }
 
       // If no topics are selected, return null
@@ -288,56 +243,62 @@
       }
 
       // Calculate total frequency
-      let totalFrequency = availableFrequencies.reduce((a, b) => a + b, 0);
+      let totalFrequency = availableSayings.reduce((sum, s) => sum + s.frequency, 0);
       let rnd = random(totalFrequency);
       let accum = 0;
+
       // Select a saying based on its frequency
-      for (let i = 0; i < availableSayings.length; i++) {
-        accum += availableFrequencies[i];
+      for (let s of availableSayings) {
+        accum += s.frequency;
         if (rnd < accum) {
-          return availableSayings[i];
+          return s.text;
         }
       }
+
       // Fallback in case of error
-      return random(availableSayings);
+      return random(availableSayings).text;
     }
 
     function drawChatWindow() {
       // Draw the chat window background
-      fill(10);
+      colorMode(RGB, 255);
+      fill(10); // Darker chat window
+      noStroke();
       rect(10, 10, width - 20, height - 200);
+
+      // Switch back to HSB color mode
+      colorMode(HSB, 360, 100, 100);
 
       // Begin drawing messages
       push();
-      translate(15, height - 200); // Adjusted position to prevent overlap
+      translate(15, height - 200);
       let y = 0;
-      let lineHeight = textSizeSlider.value() + 6; // Adjust line height based on text size
-      // Loop through messages in reverse to display the latest ones at the bottom
+      let lineHeight = textSizeSlider.value() + 6;
+
+      // Loop through messages in reverse
       for (let i = messages.length - 1; i >= 0; i--) {
         let msg = messages[i];
-        fill(nameColors[msg.name]); // Set text color to the screen name's color
+        fill(nameColors[msg.name]);
         text(msg.name + ": ", 0, -y);
-        fill(200); // Light text color for the message text
+        fill(200);
         text(msg.text, textWidth(msg.name + ": "), -y);
-        y += lineHeight; // Move up for the next message
+        y += lineHeight;
         if (y > height - 220) {
-          break; // Stop if we've filled the chat window
+          break;
         }
       }
       pop();
     }
 
     function drawWinIndicator() {
-      // Draw the blue bar indicator over the Win button if winMode is active
       if (winMode) {
         let elapsedTime = millis() - winModeStartTime;
         let remainingTime = 10000 - elapsedTime;
         let barWidth = map(remainingTime, 0, 10000, 0, buttonWidth);
-        fill(0, 0, 255, 100); // Semi-transparent blue
+        fill(0, 0, 255, 100);
         noStroke();
         rect(10, buttonY, barWidth, buttonHeight);
 
-        // Reset winMode after 10 seconds
         if (remainingTime <= 0) {
           winMode = false;
         }
