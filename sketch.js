@@ -1,4 +1,4 @@
-// Chat Window Simulation in Processing (Java) - Refined and Cleaned Code
+// Chat Window Simulation in Processing (Java) - Fully Corrected Code
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,6 +68,7 @@ void setup() {
   }
 
   // Initialize sayings with frequencies
+  // Pets topic
   topicSayings.put("Pets", new ArrayList<Saying>(Arrays.asList(
     new Saying("Woof woof!", 10),
     new Saying("Meow meow!", 10),
@@ -81,6 +82,7 @@ void setup() {
     new Saying("Purring loudly!", 5)
   )));
 
+  // Gaming topic
   topicSayings.put("Gaming", new ArrayList<Saying>(Arrays.asList(
     new Saying("GG!", 15),
     new Saying("Victory Royale!", 10),
@@ -94,6 +96,7 @@ void setup() {
     new Saying("Drop at Tilted Towers?", 10)
   )));
 
+  // Art topic
   topicSayings.put("Art", new ArrayList<Saying>(Arrays.asList(
     new Saying("The juxtaposition of colors is fascinating.", 10),
     new Saying("This piece evokes deep emotions.", 10),
@@ -107,6 +110,7 @@ void setup() {
     new Saying("Art is a universal language.", 5)
   )));
 
+  // Philosophy topic
   topicSayings.put("Philosophy", new ArrayList<Saying>(Arrays.asList(
     new Saying("The unexamined life is not worth living.", 10),
     new Saying("Knowledge begins in wonder.", 10),
@@ -120,6 +124,7 @@ void setup() {
     new Saying("Pleasure in the job puts perfection in the work.", 10)
   )));
 
+  // Coding topic
   topicSayings.put("Coding", new ArrayList<Saying>(Arrays.asList(
     new Saying("Wow, nice!", 10),
     new Saying("Is this the matrix?", 10),
@@ -133,6 +138,7 @@ void setup() {
     new Saying("Stack overflowed!", 10)
   )));
 
+  // Weather topic
   topicSayings.put("Weather", new ArrayList<Saying>(Arrays.asList(
     new Saying("What's the weather?", 10),
     new Saying("It's nice and sunny here.", 15),
