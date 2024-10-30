@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Chat Window with All Topics Fixed</title>
+  <title>Chat Window with Fixes Applied</title>
   <!-- Include the p5.js library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js"></script>
 </head>
@@ -21,6 +21,7 @@
       "Purrfect Cat",
       "Curious Cat"
     ];
+
 
     // Sayings categorized by topic with frequencies
     let topicSayings = {
@@ -126,8 +127,18 @@
     let buttonHeight = 30;
     let buttonY;
 
+    let inputBox, sendButton; // For custom message input
+
+    // Auto Chat Toggle
+    let autoChatButton;
+    let autoChatEnabled = true;
+
+    // Timer for automatic Win mode activation
+    let lastWinActivationTime = 0;
+    let winActivationInterval = 60000; // 60,000 milliseconds (1 minute)
+
     function setup() {
-      createCanvas(600, 600);
+      createCanvas(600, 700); // Increased height to accommodate additional button
       textSize(14);
       textFont('Arial');
 
@@ -140,7 +151,7 @@
       });
 
       // Create the text size slider
-      textSizeSlider = createSlider(10, 24, 14, 1);
+      textSizeSlider = createSlider(10, 24, 20, 1);
       textSizeSlider.position(10, height - 170);
       textSizeSlider.style('width', '580px');
 
@@ -149,29 +160,52 @@
       speedSlider.position(10, height - 140);
       speedSlider.style('width', '580px');
 
-      // Create checkboxes for topics
+      // Create checkboxes for topics (All enabled by default)
       petCheckbox = createCheckbox('Pets', true);
       petCheckbox.position(10, height - 120);
-      gamingCheckbox = createCheckbox('Gaming', false);
+      gamingCheckbox = createCheckbox('Gaming', true);
       gamingCheckbox.position(80, height - 120);
-      artCheckbox = createCheckbox('Art', false);
+      artCheckbox = createCheckbox('Art', true);
       artCheckbox.position(160, height - 120);
-      philosophyCheckbox = createCheckbox('Philosophy', false);
+      philosophyCheckbox = createCheckbox('Philosophy', true);
       philosophyCheckbox.position(230, height - 120);
-      codingCheckbox = createCheckbox('Coding', false);
+      codingCheckbox = createCheckbox('Coding', true);
       codingCheckbox.position(340, height - 120);
-      weatherCheckbox = createCheckbox('Weather', false);
+      weatherCheckbox = createCheckbox('Weather', true);
       weatherCheckbox.position(420, height - 120);
 
       // Calculate button dimensions
       buttonWidth = (width - 20) / 4;
-      buttonY = height - 90;
+      buttonY = height - 200;
 
       // Create the Win button
       winButton = createButton('Win');
       winButton.position(10, buttonY);
       winButton.size(buttonWidth, buttonHeight);
       winButton.mousePressed(activateWinMode);
+
+      // Create the Auto Chat toggle button
+      autoChatButton = createButton('Auto Chat: ON');
+      autoChatButton.position(20 + buttonWidth, buttonY);
+      autoChatButton.size(buttonWidth, buttonHeight);
+      autoChatButton.mousePressed(toggleAutoChat);
+
+      // Create the input box for custom messages
+      inputBox = createInput();
+      // Adjusted position to move 50 pixels down
+      inputBox.position(10, buttonY + buttonHeight + 90);
+      inputBox.size(width - 300, 30);
+
+      // Create the send button
+      sendButton = createButton('Send');
+      sendButton.position(inputBox.x + inputBox.width + 10, inputBox.y);
+      sendButton.size(80, 30);
+      sendButton.mousePressed(sendCustomMessage);
+      // Prevent default button behavior
+      sendButton.attribute('type', 'button');
+
+      // Initialize lastWinActivationTime
+      lastWinActivationTime = millis();
     }
 
     function draw() {
@@ -191,10 +225,20 @@
       let txtSize = textSizeSlider.value();
       textSize(txtSize);
 
-      // Add a new message if the interval has passed
-      if (millis() - lastMessageTime > messageInterval) {
-        addNewMessage();
-        lastMessageTime = millis();
+      // Handle automatic messages if Auto Chat is enabled
+      if (autoChatEnabled) {
+        // Add a new message if the interval has passed
+        if (millis() - lastMessageTime > messageInterval) {
+          addNewMessage();
+          lastMessageTime = millis();
+        }
+
+        // Automatically activate Win mode every minute
+        if (millis() - lastWinActivationTime > winActivationInterval) {
+          winMode = true;
+          winModeStartTime = millis();
+          lastWinActivationTime = millis();
+        }
       }
 
       // Draw the chat window and messages
@@ -207,6 +251,12 @@
     function activateWinMode() {
       winMode = true;
       winModeStartTime = millis();
+      lastWinActivationTime = millis(); // Reset the timer
+    }
+
+    function toggleAutoChat() {
+      autoChatEnabled = !autoChatEnabled;
+      autoChatButton.html('Auto Chat: ' + (autoChatEnabled ? 'ON' : 'OFF'));
     }
 
     function addNewMessage() {
@@ -290,26 +340,32 @@
       colorMode(RGB, 255);
       fill(10); // Darker chat window
       noStroke();
-      rect(10, 10, width - 20, height - 200);
+      rect(10, 10, width - 20, height - 230);
 
       // Switch back to HSB color mode
       colorMode(HSB, 360, 100, 100);
 
       // Begin drawing messages
       push();
-      translate(15, height - 200);
+      translate(15, height - 230);
       let y = 0;
       let lineHeight = textSizeSlider.value() + 6;
 
       // Loop through messages in reverse
       for (let i = messages.length - 1; i >= 0; i--) {
         let msg = messages[i];
+
+        // Ensure the name has an assigned color
+        if (!nameColors[msg.name]) {
+          nameColors[msg.name] = color(random(0, 360), 100, 100);
+        }
+
         fill(nameColors[msg.name]);
         text(msg.name + ": ", 0, -y);
         fill(200);
         text(msg.text, textWidth(msg.name + ": "), -y);
         y += lineHeight;
-        if (y > height - 220) {
+        if (y > height - 250) {
           break;
         }
       }
@@ -329,6 +385,26 @@
           winMode = false;
         }
       }
+    }
+
+    function sendCustomMessage() {
+      let messageText = inputBox.value();
+      if (messageText.length > 0) {
+        let name = 'Cool Dog';
+
+        // Check if "cooldog" is in nameColors; if not, assign a color
+        if (!nameColors[name]) {
+          nameColors["Cool Dog"] = color(90, 100, 100);
+        }
+
+        messages.push({ name: name, text: messageText });
+        if (messages.length > maxMessages) {
+          messages.shift();
+        }
+        inputBox.value(''); // Clear the input box
+      }
+      // Prevent default button behavior
+      return false;
     }
   </script>
 </body>
